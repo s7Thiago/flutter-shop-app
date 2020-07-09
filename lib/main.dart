@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import './views/products_overview_screen.dart';
+import 'utils/routes.dart';
+import './views/product_datail_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +15,10 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.deepOrange,
         fontFamily: 'Lato',
       ),
-      home: ProductsOverviewScreen(),
+      routes: {
+        AppRoutes.HOME: (_) => ProductsOverviewScreen(),
+        AppRoutes.PRODUCT_DETAIL: (_) => ProductDetatilScreen(),
+      },
     );
   }
 }
