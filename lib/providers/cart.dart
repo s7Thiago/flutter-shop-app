@@ -24,7 +24,7 @@ class Cart with ChangeNotifier {
     return {..._items};
   }
 
-  int get itemCount => _items.length;
+  int get itemsCount => _items.length;
 
   double get totalAmount {
     double total = 0.0;
@@ -48,13 +48,14 @@ class Cart with ChangeNotifier {
       );
     } else {
       _items.putIfAbsent(
-          product.id,
-          () => CartItem(
-                id: Random().nextDouble().toString(),
-                title: product.title,
-                quantity: 1,
-                price: product.price,
-              ));
+        product.id,
+        () => CartItem(
+          id: Random().nextDouble().toString(),
+          title: product.title,
+          quantity: 1,
+          price: product.price,
+        ),
+      );
     }
     notifyListeners();
   }
