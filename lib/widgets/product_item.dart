@@ -36,6 +36,7 @@ class ProductItem extends StatelessWidget {
           title: Text(product.title),
           trailing: IconButton(
             icon: Icon(Icons.shopping_cart),
+            color: Theme.of(context).accentColor,
             onPressed: () {},
           ),
         ),
