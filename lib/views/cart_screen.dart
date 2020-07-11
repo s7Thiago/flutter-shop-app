@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/product_item.dart';
-import '../widgets/cart_item_widget.dart';
-
 import '../providers/cart.dart';
+import '../providers/orders.dart';
+
+import '../widgets/cart_item_widget.dart';
 
 class CartScreen extends StatelessWidget {
   @override
@@ -44,8 +44,14 @@ class CartScreen extends StatelessWidget {
                   ),
                   Spacer(),
                   FlatButton(
-                    onPressed: null,
                     child: Text('Buy'),
+                    onPressed: () {
+                      Provider.of<Orders>(context, listen: false)
+                          .addOrder(cart);
+
+                      // Cleaning up cart
+                      cart.clear();
+                    },
                   )
                 ],
               ),
