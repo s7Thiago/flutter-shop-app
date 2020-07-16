@@ -37,6 +37,10 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   }
 
   _saveForm() {
+    bool _isFormValid = _form.currentState.validate();
+
+    if (!_isFormValid) return; //If the form is not valid, exits the function
+
     _form.currentState.save(); //Call the onSave from each form textfield
 
     final newProduct = Product(
@@ -80,6 +84,12 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
                 onSaved: (value) {
                   _formData['title'] = value;
+                },
+                validator: (value) {
+                  if (value.trim().isEmpty) return 'Provide a valid title!';
+                  if (value.trim().length < 3)
+                    return 'Provide a title with at least 3 letters!';
+                  return null;
                 },
               ),
               TextFormField(
