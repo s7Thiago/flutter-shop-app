@@ -30,7 +30,7 @@ class AppDrawer extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(Icons.edit),
-            title: Text('Manege products'),
+            title: Text('Manage products'),
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(AppRoutes.PRODUCTS_MANAGER);
