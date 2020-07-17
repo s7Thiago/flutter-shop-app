@@ -16,10 +16,10 @@ class Products with ChangeNotifier {
 
   int get itemsCount => _items.length;
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     const url = 'https://flutter-cod3r-shop-68ee0.firebaseio.com/products.json';
 
-    http
+    return http
         .post(
       url,
       body: json.encode({
@@ -27,6 +27,7 @@ class Products with ChangeNotifier {
         'title': product.title,
         'description': product.description,
         'price': product.price,
+        'imageUrl': product.imageUrl,
         'isFavorite': product.isFavorite,
       }),
     )
