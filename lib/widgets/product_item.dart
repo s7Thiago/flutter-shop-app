@@ -38,8 +38,28 @@ class ProductItem extends StatelessWidget {
                 color: Theme.of(context).errorColor,
               ),
               onPressed: () {
-                Provider.of<Products>(context, listen: false)
-                    .deleteProduct(product.id);
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Delete product'),
+                    content: Text('Are you sure?'),
+                    actions: <Widget>[
+                      FlatButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text('Cancel'),
+                      ),
+                      FlatButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text('Delete'),
+                      ),
+                    ],
+                  ),
+                ).then((value) {
+                  if (value) {
+                    Provider.of<Products>(context, listen: false)
+                        .deleteProduct(product.id);
+                  }
+                });
               },
             ),
           ],
