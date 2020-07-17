@@ -1,8 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 class ProductFormScreen extends StatefulWidget {
   @override
@@ -22,6 +22,29 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   void initState() {
     super.initState();
     _imageUrlFocusNode.addListener(_updateImage);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_formData.isEmpty) {
+      final productInstance =
+          ModalRoute.of(context).settings.arguments as Product;
+
+      if (productInstance != null) {
+        //Initializing the form data with data passed via argument object
+        _formData['id'] = productInstance.id;
+        _formData['title'] = productInstance.title;
+        _formData['description'] = productInstance.description;
+        _formData['price'] = productInstance.price;
+        _formData['imageUrl'] = productInstance.imageUrl;
+
+        _imageUrlController.text = _formData['imageUrl'];
+      } else {
+        _formData['price'] = '';
+      }
+    }
   }
 
   @override
@@ -54,15 +77,25 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
     _form.currentState.save(); //Call the onSave from each form textfield
 
-    final newProduct = Product(
-      id: Random().nextDouble().toString(),
+// Product instance
+    final product = Product(
+      id: _formData['id'],
       title: _formData['title'],
       description: _formData['description'],
       imageUrl: _formData['imageUrl'],
       price: _formData['price'],
     );
 
-    print(_formData.values);
+    // Adding the product above in the global list via provider
+    final products = Provider.of<Products>(context, listen: false);
+
+    if (_formData['id'] == null) {
+      products.addProduct(product);
+    } else {
+      products.updateProduct(product);
+    }
+
+    Navigator.of(context).pop(); // Closing the current screen
   }
 
   @override
@@ -86,6 +119,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _formData['title'],
                 decoration: InputDecoration(
                   labelText: 'Title',
                 ),
@@ -109,6 +143,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _formData['price'].toString(),
                 decoration: InputDecoration(
                   labelText: 'Price',
                 ),
@@ -134,6 +169,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _formData['description'],
                 decoration: InputDecoration(
                   labelText: 'Description',
                 ),

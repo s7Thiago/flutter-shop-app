@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../providers/product.dart';
+import '../utils/routes.dart';
 
 class ProductItem extends StatelessWidget {
   final Product product;
@@ -12,7 +14,7 @@ class ProductItem extends StatelessWidget {
       leading: CircleAvatar(
         backgroundImage: NetworkImage(product.imageUrl),
       ),
-      title: Text('product.title'),
+      title: Text(product.title),
       trailing: Container(
         width: 100,
         child: Row(
@@ -22,7 +24,10 @@ class ProductItem extends StatelessWidget {
                 Icons.edit,
                 color: Theme.of(context).primaryColor,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(AppRoutes.FORM_SCREEN, arguments: product);
+              },
             ),
             IconButton(
               icon: Icon(
