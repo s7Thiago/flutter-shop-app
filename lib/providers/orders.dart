@@ -93,8 +93,6 @@ class Orders with ChangeNotifier {
       notifyListeners();
     }
 
-    print('DATA => $data');
-
     _items = loadedItems.reversed.toList();
 
     return Future.value();

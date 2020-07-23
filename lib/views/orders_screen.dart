@@ -6,39 +6,31 @@ import '../widgets/order_widget.dart';
 
 import '../providers/orders.dart';
 
-class OrdersScreen extends StatefulWidget {
-  @override
-  _OrdersScreenState createState() => _OrdersScreenState();
-}
-
-class _OrdersScreenState extends State<OrdersScreen> {
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    Provider.of<Orders>(context, listen: false).loadOrders().then(
-          (value) => setState(() => _isLoading = false),
-        );
-  }
-
+class OrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final orders = Provider.of<Orders>(context);
-
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
         title: Text('My Orders'),
       ),
-      body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : ListView.builder(
-              itemCount: orders.itemsCount,
-              itemBuilder: (ctx, index) => OrderWidget(orders.items[index]),
-            ),
+      body: FutureBuilder(
+        future: Provider.of<Orders>(context, listen: false).loadOrders(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.error != null) {
+            return Center(child: Text('An error has ocurred!!'));
+          } else {
+            return Consumer<Orders>(
+              builder: (context, orders, child) => ListView.builder(
+                itemCount: orders.itemsCount,
+                itemBuilder: (ctx, index) => OrderWidget(orders.items[index]),
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
