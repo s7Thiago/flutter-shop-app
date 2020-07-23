@@ -5,9 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:shop_app/exceptions/http_exception.dart';
 
 import 'product.dart';
+import '../utils/constants.dart';
 
 class Products with ChangeNotifier {
-  final _baseUrl = 'https://flutter-cod3r-shop-68ee0.firebaseio.com/products';
+  final _baseUrl = '${Constants.BASE_API_URL}/products';
 
   List<Product> _items = [];
 

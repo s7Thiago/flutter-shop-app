@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import './cart.dart';
+import '../utils/constants.dart';
 
 class Order {
   final String id;
@@ -21,7 +22,7 @@ class Order {
 }
 
 class Orders with ChangeNotifier {
-  final _baseUrl = 'https://flutter-cod3r-shop-68ee0.firebaseio.com/orders';
+  final _baseUrl = '${Constants.BASE_API_URL}/orders';
   List<Order> _items = [];
 
   List<Order> get items => [..._items];
