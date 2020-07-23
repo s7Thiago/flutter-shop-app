@@ -71,7 +71,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         (endsWithPng || endsWithjpg || endsWithJpeg);
   }
 
-  _saveForm() {
+  Future<void> _saveForm() async {
     bool _isFormValid = _form.currentState.validate();
 
     if (!_isFormValid) return; //If the form is not valid, exits the function
@@ -94,18 +94,16 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     setState(() => _isLoading = true);
 
     if (_formData['id'] == null) {
-      products.addProduct(product).then((_) {
+      await products.addProduct(product).then((_) {
         // Records when some late operation is finished
-        setState(() => _isLoading = true);
+        setState(() => _isLoading = false);
         Navigator.of(context).pop();
       });
     } else {
       products.updateProduct(product);
-      setState(() => _isLoading = true);
+      setState(() => _isLoading = false);
       Navigator.of(context).pop();
     }
-
-    Navigator.of(context).pop(); // Closing the current screen
   }
 
   @override
