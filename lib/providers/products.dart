@@ -15,33 +15,56 @@ class Products with ChangeNotifier {
       _items.where((product) => product.isFavorite).toList();
 
   int get itemsCount => _items.length;
+
   Future<void> loadProducts() async {
     final response = await http.get(_url);
 
-    print(json.decode(response.body));
+    Map<String, dynamic> data = json.decode(response.body);
+
+    data.forEach(
+      (productId, productData) {
+        _items.add(
+          Product(
+            id: productId,
+            title: productData['title'],
+            description: productData['description'],
+            price: productData['price'],
+            imageUrl: productData['imageUrl'],
+            isFavorite: productData['isFavorite'],
+          ),
+        );
+      },
+    );
+    notifyListeners();
+
+    return Future.value();
   }
 
   Future<void> addProduct(Product product) async {
     final response = await http.post(
       _url,
-      body: json.encode({
-        'id': product.id,
-        'title': product.title,
-        'description': product.description,
-        'price': product.price,
-        'imageUrl': product.imageUrl,
-        'isFavorite': product.isFavorite,
-      }),
+      body: json.encode(
+        {
+          'id': product.id,
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+          'isFavorite': product.isFavorite,
+        },
+      ),
     );
 
-    _items.add(Product(
-      id: json.decode(response.body)['name'],
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-    ));
-    notifyListeners(); //notifyes all the children interested in the products list (_items)
+    _items.add(
+      Product(
+        id: json.decode(response.body)['name'],
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      ),
+    );
+    notifyListeners(); //notifies all the children interested in the products list (_items)
   }
 
   void updateProduct(Product product) {
