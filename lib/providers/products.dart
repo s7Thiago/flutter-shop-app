@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'product.dart';
 
 class Products with ChangeNotifier {
-  final _url = 'https://flutter-cod3r-shop-68ee0.firebaseio.com/products.json';
+  final _baseUrl = 'https://flutter-cod3r-shop-68ee0.firebaseio.com/products';
 
   List<Product> _items = [];
 
@@ -17,7 +17,7 @@ class Products with ChangeNotifier {
   int get itemsCount => _items.length;
 
   Future<void> loadProducts() async {
-    final response = await http.get(_url);
+    final response = await http.get('$_baseUrl.json');
 
     Map<String, dynamic> data = json.decode(response.body);
 
@@ -45,7 +45,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final response = await http.post(
-      _url,
+      '$_baseUrl.json',
       body: json.encode(
         {
           'id': product.id,
@@ -70,13 +70,26 @@ class Products with ChangeNotifier {
     notifyListeners(); //notifies all the children interested in the products list (_items)
   }
 
-  void updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     if (product == null || product.id == null) {
       return;
     }
     final index = _items.indexWhere((target) => product.id == target.id);
 
     if (index >= 0) {
+      http.patch(
+        '$_baseUrl/${product.id}.json',
+        body: json.encode(
+          {
+            'id': product.id,
+            'title': product.title,
+            'description': product.description,
+            'price': product.price,
+            'imageUrl': product.imageUrl,
+          },
+        ),
+      );
+
       _items[index] = product;
       notifyListeners();
     }

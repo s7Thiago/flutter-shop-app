@@ -100,7 +100,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         Navigator.of(context).pop();
       });
     } else {
-      products.updateProduct(product);
+      await products.updateProduct(product);
       setState(() => _isLoading = false);
       Navigator.of(context).pop();
     }
