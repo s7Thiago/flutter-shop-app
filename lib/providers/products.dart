@@ -21,20 +21,23 @@ class Products with ChangeNotifier {
 
     Map<String, dynamic> data = json.decode(response.body);
 
-    data.forEach(
-      (productId, productData) {
-        _items.add(
-          Product(
-            id: productId,
-            title: productData['title'],
-            description: productData['description'],
-            price: productData['price'],
-            imageUrl: productData['imageUrl'],
-            isFavorite: productData['isFavorite'],
-          ),
-        );
-      },
-    );
+    _items.clear();
+
+    if (data != null)
+      data.forEach(
+        (productId, productData) {
+          _items.add(
+            Product(
+              id: productId,
+              title: productData['title'],
+              description: productData['description'],
+              price: productData['price'],
+              imageUrl: productData['imageUrl'],
+              isFavorite: productData['isFavorite'],
+            ),
+          );
+        },
+      );
     notifyListeners();
 
     return Future.value();
