@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_app/exceptions/http_exception.dart';
 
 import 'product.dart';
 
@@ -104,11 +105,13 @@ class Products with ChangeNotifier {
       _items.remove(product);
       notifyListeners();
 
-      var response = await http.delete('$_baseUrl/${product.id}.jsoni');
+      var response = await http.delete('$_baseUrl/${product.id}.json');
 
       if (response.statusCode >= 400) {
         _items.insert(index, product);
         notifyListeners();
+
+        throw new HttpException('An error ocurred during product deletion');
       }
     }
   }
