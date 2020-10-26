@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../widgets/auth_card.dart';
+
 class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class AuthScreen extends StatelessWidget {
                     vertical: 8,
                     horizontal: 70,
                   ),
+                  margin: const EdgeInsets.only(bottom: 20),
                   transform: Matrix4.rotationZ(-8 * pi / 180)..translate(-10.0),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
@@ -51,6 +54,7 @@ class AuthScreen extends StatelessWidget {
                         fontFamily: 'Anton'),
                   ),
                 ),
+                AuthCard(),
               ],
             ),
           )
