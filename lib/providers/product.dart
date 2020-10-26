@@ -43,6 +43,7 @@ class Product with ChangeNotifier {
       if (response.statusCode >= 400) {
         _toggleFavorite();
       }
+      // ignore: unused_catch_clause
     } on HttpException catch (error) {
       _toggleFavorite();
     }

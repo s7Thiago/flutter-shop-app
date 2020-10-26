@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           AppRoutes.HOME: (_) => ProductsOverviewScreen(),
-          AppRoutes.PRODUCT_DETAIL: (_) => ProductDetatilScreen(),
+          AppRoutes.PRODUCT_DETAIL: (_) => ProductDetailScreen(),
           AppRoutes.CART: (_) => CartScreen(),
           AppRoutes.ORDERS: (_) => OrdersScreen(),
           AppRoutes.PRODUCTS_MANAGER: (_) => ProductsScreen(),

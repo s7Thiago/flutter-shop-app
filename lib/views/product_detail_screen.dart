@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../providers/product.dart';
 
-class ProductDetatilScreen extends StatelessWidget {
+class ProductDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Product product =

@@ -32,6 +32,7 @@ class Orders with ChangeNotifier {
   Future<void> addOrder(Cart cart) async {
     final date = DateTime.now();
 
+    // ignore: unused_local_variable
     final response = await http.post(
       '$_baseUrl.json',
       body: json.encode(
