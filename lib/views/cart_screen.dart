@@ -80,7 +80,7 @@ class _OrderButtonState extends State<OrderButton> {
   Widget build(BuildContext context) {
     return _isLoading
         ? CircularProgressIndicator()
-        : FlatButton(
+        : TextButton(
             child: Text('Buy'),
             onPressed: widget.cart.totalAmount == 0
                 ? null

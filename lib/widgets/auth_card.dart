@@ -81,7 +81,7 @@ class _AuthCardState extends State<AuthCard> {
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
                 child: Text(_authMode == AuthMode.Login ? 'Enter' : 'Register'),
                 onPressed: _submit,
-              )
+              ),
             ],
           ),
         ),

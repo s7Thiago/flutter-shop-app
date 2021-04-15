@@ -14,7 +14,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scaffold = Scaffold.of(context);
+    final scaffold = ScaffoldMessenger.of(context);
 
     return ListTile(
       leading: CircleAvatar(
@@ -47,11 +47,11 @@ class ProductItem extends StatelessWidget {
                     title: Text('Delete product'),
                     content: Text('Are you sure?'),
                     actions: <Widget>[
-                      FlatButton(
+                      TextButton(
                         onPressed: () => Navigator.of(context).pop(false),
                         child: Text('Cancel'),
                       ),
-                      FlatButton(
+                      TextButton(
                         onPressed: () => Navigator.of(context).pop(true),
                         child: Text('Delete'),
                       ),
