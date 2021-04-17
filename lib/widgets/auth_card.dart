@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth.dart';
 
 enum AuthMode { SignUp, Login }
 
@@ -8,6 +11,8 @@ class AuthCard extends StatefulWidget {
 }
 
 class _AuthCardState extends State<AuthCard> {
+  GlobalKey<FormState> _form = GlobalKey();
+  bool _isLoading = false;
   AuthMode _authMode = AuthMode.Login;
   final _passwordController = TextEditingController();
   final Map<String, String> _authData = {
@@ -15,7 +20,46 @@ class _AuthCardState extends State<AuthCard> {
     'password': '',
   };
 
-  void _submit() {}
+  Future<void> _submit() async {
+    if (!_form.currentState.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    _form.currentState.save();
+
+    Auth auth = Provider.of(context, listen: false);
+
+    if (_authMode == AuthMode.Login) {
+      // Login logics
+      await auth.login(_authData['email'], _authData['password']);
+    } else {
+      // Registrar logics
+      print(_authData);
+      await auth.signUp(_authData['email'], _authData['password']);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    return Future.value();
+  }
+
+  void _switchAuthMode() {
+    if (_authMode == AuthMode.Login) {
+      setState(() {
+        _authMode = AuthMode.SignUp;
+      });
+    } else {
+      setState(() {
+        _authMode = AuthMode.Login;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +71,10 @@ class _AuthCardState extends State<AuthCard> {
       ),
       child: Container(
         width: deviceSize.width * .75,
-        height: 320,
+        height: _authMode == AuthMode.Login ? 320 : 370,
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: _form,
           child: Column(
             children: [
               TextFormField(
@@ -59,7 +104,6 @@ class _AuthCardState extends State<AuthCard> {
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Confirm Password'),
                   obscureText: true,
-                  controller: _passwordController,
                   validator: _authMode == AuthMode.SignUp
                       ? (value) {
                           if (value != _passwordController.text) {
@@ -70,17 +114,31 @@ class _AuthCardState extends State<AuthCard> {
                       : null,
                   onSaved: (value) => _authData['password'] = value,
                 ),
-              SizedBox(height: 20),
-              RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+              Spacer(),
+              if (_isLoading)
+                CircularProgressIndicator()
+              else
+                // ignore: deprecated_member_use
+                RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  color: Theme.of(context).primaryColor,
+                  textColor: Theme.of(context).primaryTextTheme.button.color,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+                  child:
+                      Text(_authMode == AuthMode.Login ? 'Enter' : 'Register'),
+                  onPressed: _submit,
                 ),
-                color: Theme.of(context).primaryColor,
-                textColor: Theme.of(context).primaryTextTheme.button.color,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
-                child: Text(_authMode == AuthMode.Login ? 'Enter' : 'Register'),
-                onPressed: _submit,
+              TextButton(
+                onPressed: _switchAuthMode,
+                child: Text(
+                  'SWITCH TO ${_authMode == AuthMode.Login ? 'REGISTER' : 'LOGIN'}',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
               ),
             ],
           ),
