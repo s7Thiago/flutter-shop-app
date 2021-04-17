@@ -7,6 +7,22 @@ import '../exceptions/auth_exception.dart';
 
 class Auth with ChangeNotifier {
   static const _apiKey = 'AIzaSyAPGyTgl4ve28ARcvpLDUwOcQLzVH7EX2c';
+  String _token;
+  DateTime _expiryDate;
+
+  bool get isAuth {
+    return token != null;
+  }
+
+  String get token {
+    if (_token != null &&
+        _expiryDate != null &&
+        _expiryDate.isAfter(DateTime.now())) {
+      return _token;
+    } else {
+      return null;
+    }
+  }
 
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
@@ -26,6 +42,14 @@ class Auth with ChangeNotifier {
 
     if (responseBody['error'] != null) {
       throw AuthException(responseBody['error']['message']);
+    } else {
+      _token = responseBody['idToken'];
+      _expiryDate = DateTime.now().add(
+        Duration(
+          seconds: int.parse(responseBody['expiresIn']),
+        ),
+      );
+      notifyListeners();
     }
 
     return Future.value();
