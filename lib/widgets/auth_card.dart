@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth.dart';
+import '../exceptions/auth_exception.dart';
 
 enum AuthMode { SignUp, Login }
 
@@ -20,6 +21,24 @@ class _AuthCardState extends State<AuthCard> {
     'password': '',
   };
 
+  void _showErrorDialog(String msg) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('An error has ocurred'),
+        content: Text(msg),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Ok'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _submit() async {
     if (!_form.currentState.validate()) {
       return;
@@ -33,13 +52,18 @@ class _AuthCardState extends State<AuthCard> {
 
     Auth auth = Provider.of(context, listen: false);
 
-    if (_authMode == AuthMode.Login) {
-      // Login logics
-      await auth.login(_authData['email'], _authData['password']);
-    } else {
-      // Registrar logics
-      print(_authData);
-      await auth.signUp(_authData['email'], _authData['password']);
+    try {
+      if (_authMode == AuthMode.Login) {
+        // Login logics
+        await auth.login(_authData['email'], _authData['password']);
+      } else {
+        // Register logics
+        await auth.signUp(_authData['email'], _authData['password']);
+      }
+    } on AuthException catch (error) {
+      _showErrorDialog(error.toString());
+    } catch (error) {
+      _showErrorDialog('An unexpected error has ocurred!');
     }
 
     setState(() {
