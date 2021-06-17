@@ -25,12 +25,13 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProxyProvider<Auth, Products>(
           // Valor padrão que será carregado caso o update não responda
-          create: (_) => Products(null, []),
+          create: (_) => Products(),
           // Garante que ao atualizar este provider, os itens anteriores ao app sofrer um update em
           // busca de dados novos serão mantidos, ocorrendo apenas uma adição dos novos ao contexto
           // evitando assim uma desnecessária recarga integral dos dados na tela
           update: (context, auth, previousProducts) => Products(
             auth.token,
+            auth.userId,
             previousProducts.items,
           ),
         ),
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
           create: (_) => Cart(),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
-          create: (_) => Orders(null, []),
+          create: (_) => Orders(),
           update: (context, auth, previousOrders) => Orders(
             auth.token,
             previousOrders.items,

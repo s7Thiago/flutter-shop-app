@@ -26,7 +26,7 @@ class Orders with ChangeNotifier {
   String _token;
   List<Order> _items = [];
 
-  Orders(this._token, this._items);
+  Orders([this._token, this._items = const []]);
 
   List<Order> get items => [..._items];
 
