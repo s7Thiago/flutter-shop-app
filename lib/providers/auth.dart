@@ -9,9 +9,14 @@ class Auth with ChangeNotifier {
   static const _apiKey = 'AIzaSyAPGyTgl4ve28ARcvpLDUwOcQLzVH7EX2c';
   String _token;
   DateTime _expiryDate;
+  String _userId;
 
   bool get isAuth {
     return token != null;
+  }
+
+  String get userId {
+    return isAuth ? _userId : null;
   }
 
   String get token {
@@ -44,6 +49,7 @@ class Auth with ChangeNotifier {
       throw AuthException(responseBody['error']['message']);
     } else {
       _token = responseBody['idToken'];
+      _userId = responseBody['localId'];
       _expiryDate = DateTime.now().add(
         Duration(
           seconds: int.parse(responseBody['expiresIn']),
