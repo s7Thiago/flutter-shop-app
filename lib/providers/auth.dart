@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_app/data/store.dart';
 
 import '../exceptions/auth_exception.dart';
 
@@ -57,6 +58,16 @@ class Auth with ChangeNotifier {
           seconds: int.parse(responseBody['expiresIn']),
         ),
       );
+
+      // Salvando os dados do usuário no shared preferences para futuramente fazer um auto
+      // login com os dados armazenados
+      Store.saveMap('userData', {
+        'token': _token,
+        'userId': _userId,
+        'expiryDate': _expiryDate
+            .toIso8601String(), // Salva a data num formato fácil de fazer o parse reverso
+      });
+
       // chama o comportamento de logout automático assim que o login do usuário é confirmado
       _autoLogout();
       notifyListeners();
@@ -71,6 +82,38 @@ class Auth with ChangeNotifier {
   Future<void> login(String email, String password) =>
       _authenticate(email, password, 'signInWithPassword');
 
+  Future<void> tryAutoLogin() async {
+    // não continua o processo se o usuário já estiver autenticado
+    if (isAuth) {
+      return Future.value();
+    }
+
+    // Obtendo as informações de login através da Store
+    final userData = await Store.getMap('userData');
+
+    // Se não houverem informações de login salvas, não continua o processo
+    if (userData == null) {
+      return Future.value();
+    }
+
+    final expiryDate = DateTime.parse(userData['expiryDate']);
+
+    // Verificando se a data recebida é válida
+    if (expiryDate.isBefore(DateTime.now())) {
+      // Se for uma data anterior a data atual, não é válido!
+      return Future.value();
+    }
+
+    _userId = userData['userId'];
+    _token = userData['token'];
+    _expiryDate = expiryDate;
+
+    // Inicia o processo de auto logout
+    _autoLogout();
+    notifyListeners();
+    return Future.value();
+  }
+
   void logout() {
     _token = null;
     _userId = null;
@@ -82,6 +125,9 @@ class Auth with ChangeNotifier {
       _logoutTimer.cancel();
       _logoutTimer = null;
     }
+
+    // Quando um logout é feito, as chaves para os dados de autenticação são removidas
+    Store.remove('userData');
     notifyListeners();
   }
 
