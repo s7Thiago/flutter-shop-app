@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class Auth with ChangeNotifier {
   String _token;
   DateTime _expiryDate;
   String _userId;
+  Timer _logoutTimer;
 
   bool get isAuth {
     return token != null;
@@ -55,6 +57,8 @@ class Auth with ChangeNotifier {
           seconds: int.parse(responseBody['expiresIn']),
         ),
       );
+      // chama o comportamento de logout automático assim que o login do usuário é confirmado
+      _autoLogout();
       notifyListeners();
     }
 
@@ -71,6 +75,27 @@ class Auth with ChangeNotifier {
     _token = null;
     _userId = null;
     _expiryDate = null;
+
+    /* Garantindo que o timer será cancelado quando o usuário
+    fizer um logout*/
+    if (_logoutTimer != null) {
+      _logoutTimer.cancel();
+      _logoutTimer = null;
+    }
     notifyListeners();
+  }
+
+  void _autoLogout() {
+    if (_logoutTimer != null) {
+      /* Na criação do timer, se o mesmo não estiver inativo
+      ele (que é o timer mais antigo) será cancelado para que
+      não ocorra de mais de um timer rodar em paralelo
+       */
+      _logoutTimer.cancel();
+    }
+
+    /* Calculando um tempo para que o logout seja feito */
+    final timeToLogout = _expiryDate.difference(DateTime.now()).inSeconds;
+    _logoutTimer = Timer(Duration(seconds: timeToLogout), logout);
   }
 }
