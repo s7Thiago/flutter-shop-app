@@ -19,7 +19,8 @@ class _AuthCardState extends State<AuthCard>
   final _passwordController = TextEditingController();
 
   AnimationController _controller;
-  Animation<Size> _heightAnimation;
+  Animation<double> _opacityAnimation;
+  Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
@@ -29,9 +30,19 @@ class _AuthCardState extends State<AuthCard>
       duration: Duration(milliseconds: 300),
     );
 
-    _heightAnimation = Tween(
-      begin: Size(double.infinity, 290),
-      end: Size(double.infinity, 371),
+    _opacityAnimation = Tween(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.linear,
+      ),
+    );
+
+    _slideAnimation = Tween(
+      begin: Offset(0, -1.5),
+      end: Offset(0, 0),
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -125,20 +136,14 @@ class _AuthCardState extends State<AuthCard>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: AnimatedBuilder(
-        animation: _heightAnimation,
-        builder: (context, child) {
-          return Container(
-            width: deviceSize.width * .75,
-            // height: _authMode == AuthMode.Login ? 320 : 370,
-            height: _heightAnimation.value.height,
-            padding: const EdgeInsets.all(16.0),
-            child:
-                child, // é o child passado no animated build, o child é a parte estática do layout que não vai precisar sofrer nenhuma animação
-          );
-        },
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.linear,
+        width: deviceSize.width * .75,
+        // height: _heightAnimation.value.height,
+        height: _authMode == AuthMode.Login ? 320 : 370,
+        padding: const EdgeInsets.all(16.0),
         child: Form(
-          // é o child passado no animated build, está qui porque é a parte que não precisa sofrer nenhuma animação
           key: _form,
           child: Column(
             children: [
@@ -165,20 +170,34 @@ class _AuthCardState extends State<AuthCard>
                 },
                 onSaved: (value) => _authData['password'] = value,
               ),
-              if (_authMode == AuthMode.SignUp)
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Confirm Password'),
-                  obscureText: true,
-                  validator: _authMode == AuthMode.SignUp
-                      ? (value) {
-                          if (value != _passwordController.text) {
-                            return 'As senhas não são iguais!';
-                          }
-                          return null;
-                        }
-                      : null,
-                  onSaved: (value) => _authData['password'] = value,
+              AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                curve: Curves.linear,
+                constraints: BoxConstraints(
+                  minHeight: _authMode == AuthMode.SignUp ? 60 : 0,
+                  maxHeight: _authMode == AuthMode.SignUp ? 120 : 0,
                 ),
+                child: FadeTransition(
+                  opacity: _opacityAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: TextFormField(
+                      decoration:
+                          InputDecoration(labelText: 'Confirm Password'),
+                      obscureText: true,
+                      validator: _authMode == AuthMode.SignUp
+                          ? (value) {
+                              if (value != _passwordController.text) {
+                                return 'As senhas não são iguais!';
+                              }
+                              return null;
+                            }
+                          : null,
+                      onSaved: (value) => _authData['password'] = value,
+                    ),
+                  ),
+                ),
+              ),
               Spacer(),
               if (_isLoading)
                 CircularProgressIndicator()
