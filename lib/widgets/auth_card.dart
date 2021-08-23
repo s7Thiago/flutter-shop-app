@@ -38,8 +38,6 @@ class _AuthCardState extends State<AuthCard>
         curve: Curves.linear,
       ),
     );
-
-    _heightAnimation.addListener(() => setState(() {}));
   }
 
   @override
@@ -127,12 +125,20 @@ class _AuthCardState extends State<AuthCard>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Container(
-        width: deviceSize.width * .75,
-        // height: _authMode == AuthMode.Login ? 320 : 370,
-        height: _heightAnimation.value.height,
-        padding: const EdgeInsets.all(16.0),
+      child: AnimatedBuilder(
+        animation: _heightAnimation,
+        builder: (context, child) {
+          return Container(
+            width: deviceSize.width * .75,
+            // height: _authMode == AuthMode.Login ? 320 : 370,
+            height: _heightAnimation.value.height,
+            padding: const EdgeInsets.all(16.0),
+            child:
+                child, // é o child passado no animated build, o child é a parte estática do layout que não vai precisar sofrer nenhuma animação
+          );
+        },
         child: Form(
+          // é o child passado no animated build, está qui porque é a parte que não precisa sofrer nenhuma animação
           key: _form,
           child: Column(
             children: [
