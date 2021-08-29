@@ -1,4 +1,4 @@
-# Payflow
+# Flutter Shop App Sample
 
 A Flutter app developed to train the implementation of features described on Features section
 
