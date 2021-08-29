@@ -1,6 +1,6 @@
 # Flutter Shop App Sample
 
-A Flutter app developed to train the implementation of features described on Features section
+A Flutter app developed to train the implementation of features described on Features section. The app is using backend as a service provided by Firebase.
 
 ## Project Status
 
